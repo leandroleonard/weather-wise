@@ -16,7 +16,9 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
+        "@fortawesome/fontawesome-free": "^7.1.0",
         "@inertiajs/vue3": "^2.3.11",
+        "bootstrap": "^5.3.8",
         "vue": "^3.5.27"
     }
 }
