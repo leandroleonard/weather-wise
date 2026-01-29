@@ -14,6 +14,7 @@ create table
         twofa_secret text null,
         city_id int null,
         last_login datetime null,
+        email_verified_at datetime null,
         created_at datetime default current_timestamp,
         updated_at datetime null,
         deleted_at datetime null
@@ -26,7 +27,7 @@ BEGIN
 	IF (NEW.`id` IS NULL OR NEW.`id` = '')
 	THEN
 		SET NEW.`id` = REPLACE(UUID(), "-", "");
-		
+
 	END IF;
 END;;
 
