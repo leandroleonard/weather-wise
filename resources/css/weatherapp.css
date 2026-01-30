@@ -6,6 +6,13 @@ body {
     padding: 0;
 }
 
+.text-error {
+    color: #e05252;
+    font-size: 13px;
+    margin-top: 6px;
+    margin-bottom: 6px;
+}
+
 .auth-page {
     min-height: 100vh;
     display: flex;
