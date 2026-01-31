@@ -3,6 +3,7 @@
 namespace App\Services\Auth;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -21,6 +22,9 @@ class LoginService
             if (! Hash::check($password, $user->pass)) {
                 return null;
             }
+
+            $user->last_login = Carbon::now();
+            $user->save();
 
 
             return $user;
