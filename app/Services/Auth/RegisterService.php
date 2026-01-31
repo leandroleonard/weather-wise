@@ -2,6 +2,7 @@
 namespace App\Services\Auth;
 
 use App\Models\User;
+use App\Models\UserSettings;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -17,7 +18,7 @@ class RegisterService
                 'pass' => Hash::make($data['password']),
             ]);
 
-            // event(new SendEmailVerification($user));
+            UserSettings::create(['user_id' => $user->id, 'property' => 'setup', 'value' => false]);
 
             return $user;
         });
