@@ -13,6 +13,7 @@ create table
         twofa_enabled tinyint (1) default 0,
         twofa_secret text null,
         city_id int null,
+        has_completed_setup tinyint(1) default 0,
         last_login datetime null,
         email_verified_at datetime null,
         created_at datetime default current_timestamp,

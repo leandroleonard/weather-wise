@@ -34,7 +34,7 @@ class RegisterController extends Controller
 
             $request->session()->regenerate();
 
-            return redirect()->route('dashboard');
+            return redirect()->route('setup');
         } catch (\Exception $e) {
             Log::error('RegisterController@store error: ' . $e->getMessage(), ['exception' => $e]);
 

@@ -18,8 +18,6 @@ class RegisterService
                 'pass' => Hash::make($data['password']),
             ]);
 
-            UserSettings::create(['user_id' => $user->id, 'property' => 'setup', 'value' => false]);
-
             return $user;
         });
     }
