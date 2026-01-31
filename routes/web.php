@@ -16,7 +16,7 @@ Route::get('register', [RegisterController::class, 'create'])->name('register');
 Route::post('register', [RegisterController::class, 'store'])->name('register_submit');
 
 
-Route::group(['prefix' => 'dashboard'], function(){
+Route::middleware(['auth'])->prefix('dashboard')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('teste', function(){return session()->all();});
-})->middleware('auth');
+    Route::get('/teste', function () {return session()->all();});
+});

@@ -20,4 +20,14 @@ class RegisterRequest extends FormRequest
             ],
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'email.required' => 'Email is required',
+            'email.email' => 'Invalid email',
+            'email.unique' => 'Email already exists.',
+            'password.required' => 'Password is required',
+        ];
+    }
 }

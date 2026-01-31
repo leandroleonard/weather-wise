@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Services\Auth\RegisterService;
-use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 
 class RegisterController extends Controller
@@ -18,7 +20,7 @@ class RegisterController extends Controller
 
     public function create()
     {
-        return Inertia::render('Auth/Register');
+        return view('auth.register');
     }
 
     public function store(RegisterRequest $request): RedirectResponse
@@ -28,16 +30,17 @@ class RegisterController extends Controller
         try {
             $user = $this->service->createUser($data);
 
-            // auth()->login($user);
+            Auth::guard()->login($user);
+
+            $request->session()->regenerate();
 
             return redirect()->route('dashboard');
         } catch (\Exception $e) {
-            \Log::error('Register error: '.$e->getMessage(), ['exception' => $e]);
+            Log::error('RegisterController@store error: ' . $e->getMessage(), ['exception' => $e]);
 
-            return redirect()
-                ->back()
+            return back()
                 ->withInput($request->except('password', 'password_confirmation'))
-                ->with('flash', ['error' => 'An error occurred while creating your account. Please try again.']);
+                ->with('flash.error', 'Internal error while creating your account. Please try again.');
         }
     }
 }

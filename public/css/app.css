@@ -1,0 +1,458 @@
+:root {
+    --primary-blue: #3b82f6;
+    --dark-blue: #2563eb;
+    --light-blue: #60a5fa;
+    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 1rem 0;
+}
+
+.navbar-brand {
+    color: white !important;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.navbar-brand i {
+    margin-right: 0.5rem;
+}
+
+.btn-outline-light {
+    border: 2px solid white;
+    color: white;
+    font-weight: 500;
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.btn-outline-light:hover {
+    background: white;
+    color: var(--primary-blue);
+}
+
+.btn-light {
+    background: white;
+    color: var(--primary-blue);
+    font-weight: 600;
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    border: none;
+}
+
+.hero-section {
+    text-align: center;
+    color: white;
+    padding: 3rem 0 2rem;
+}
+
+.hero-section h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+}
+
+.hero-section p {
+    font-size: 1.2rem;
+    opacity: 0.9;
+}
+
+.weather-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.weather-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+}
+
+.city-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+}
+
+.country {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.temperature {
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 1rem 0;
+}
+
+.weather-description {
+    color: #64748b;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.feels-like {
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
+.weather-icon {
+    font-size: 4rem;
+    margin: 1rem 0;
+}
+
+.weather-details {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.detail-item {
+    text-align: center;
+}
+
+.detail-item i {
+    color: var(--primary-blue);
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.detail-value {
+    font-weight: 600;
+    color: #1e293b;
+    font-size: 1rem;
+}
+
+.detail-label {
+    color: #94a3b8;
+    font-size: 0.8rem;
+}
+
+/* Auth Form Styles */
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+}
+
+.auth-card {
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    max-width: 450px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.auth-logo {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.auth-logo i {
+    font-size: 3rem;
+    color: var(--primary-blue);
+}
+
+.auth-logo h2 {
+    color: #1e293b;
+    font-weight: 700;
+    margin-top: 1rem;
+}
+
+.auth-logo p {
+    color: #64748b;
+    font-size: 0.95rem;
+}
+
+.form-label {
+    color: #1e293b;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    padding-left: 2.75rem;
+    font-size: 0.95rem;
+}
+
+.form-control:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 0.2rem rgba(59, 130, 246, 0.25);
+}
+
+.input-group {
+    position: relative;
+}
+
+.input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #94a3b8;
+    z-index: 10;
+}
+
+.btn-primary {
+    background: var(--primary-blue);
+    border: none;
+    border-radius: 10px;
+    padding: 0.75rem;
+    font-weight: 600;
+    font-size: 1rem;
+    width: 100%;
+    margin-top: 1rem;
+}
+
+.btn-primary:hover {
+    background: var(--dark-blue);
+}
+
+.auth-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    color: #64748b;
+}
+
+.auth-footer a {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+.back-link {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.back-link a {
+    color: #64748b;
+    text-decoration: none;
+}
+
+.back-link a:hover {
+    color: #1e293b;
+}
+
+/* Dashboard Styles */
+.dashboard-header {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    padding: 1rem 0;
+    margin-bottom: 2rem;
+}
+
+.user-greeting {
+    color: white;
+    font-size: 1.1rem;
+}
+
+.btn-logout {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid white;
+    color: white;
+    padding: 0.5rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.btn-logout:hover {
+    background: white;
+    color: var(--primary-blue);
+}
+
+.city-title {
+    color: white;
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+}
+
+.current-weather {
+    background: white;
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.current-temp {
+    font-size: 4rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.current-condition {
+    color: #64748b;
+    font-size: 1.2rem;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.info-card {
+    background: #f8fafc;
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.info-card i {
+    font-size: 1.5rem;
+    color: var(--primary-blue);
+    margin-bottom: 0.75rem;
+}
+
+.info-card .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.25rem;
+}
+
+.info-card .label {
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+.forecast-section {
+    margin-top: 2rem;
+}
+
+.forecast-title {
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+.forecast-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.forecast-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.forecast-day {
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.forecast-date {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.forecast-icon {
+    font-size: 2.5rem;
+    margin: 1rem 0;
+}
+
+.forecast-temp {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.forecast-temp-range {
+    color: #64748b;
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+}
+
+.forecast-rain {
+    color: var(--primary-blue);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+}
+
+
+.page.active {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+
+    .temperature {
+        font-size: 2.5rem;
+    }
+
+    .current-temp {
+        font-size: 3rem;
+    }
+
+    .city-title {
+        font-size: 2rem;
+    }
+}
+
+.text-error {
+    color: #e05252;
+    font-size: 0.9rem;
+    margin-top: 6px;
+    display: block;
+}
+
+.password-strength-bar {
+    height: 8px;
+    border-radius: 8px;
+    background: #e6e9ef;
+    overflow: hidden;
+}
+
+.password-strength-fill {
+    height: 100%;
+    transition: width .2s ease;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: .12em;
+}
