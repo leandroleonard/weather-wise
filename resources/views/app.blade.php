@@ -18,8 +18,8 @@
                 WeatherApp
             </a>
             <div>
-                <a href="{{ route('login') }}" class="btn btn-outline-light me-2" >Entrar</a>
-                <a href="{{ route('register') }}" class="btn btn-light">Cadastrar</a>
+                <a href="{{ route('login') }}" class="btn btn-outline-light me-2">Login</a>
+                <a href="{{ route('register') }}" class="btn btn-light">Register</a>
             </div>
         </div>
     </nav>
@@ -27,141 +27,42 @@
     <div class="hero-section">
         <div class="container">
             <h1>Real-Time Weather</h1>
-            <p>Acompanhe as condições climáticas das principais cidades do mundo</p>
+            <p>Follow the weather conditions in the world's major cities.</p>
         </div>
     </div>
 
     <div class="container pb-5">
         <div class="row">
-            <!-- São Paulo -->
-            <div class="col-md-6 col-lg-4">
-                <div class="weather-card">
-                    <div class="city-name">São Paulo</div>
-                    <div class="country">Brasil</div>
-                    <div class="weather-icon">
-                        <i class="fas fa-cloud" style="color: #94a3b8;"></i>
-                    </div>
-                    <div class="temperature">24°C</div>
-                    <div class="weather-description">Parcialmente Nublado</div>
-                    <div class="feels-like">Sensação térmica: 25°C</div>
-                    <div class="weather-details">
-                        <div class="detail-item">
-                            <i class="fas fa-tint"></i>
-                            <div class="detail-value">65%</div>
-                            <div class="detail-label">Umidade</div>
+            @foreach($featuredCities as $city)
+                @php
+                    $weather = $city->weather;
+                @endphp
+                <div class="col-md-6 col-lg-4">
+                    <div class="weather-card">
+                        <div class="city-name">{{ $city->name }}</div>
+                        <div class="country">{{ $city->country ?? 'N/A' }}</div>
+                        <div class="weather-icon">
+                            <i class="{{ ow_icon_to_fa($weather->weather_icon ?? '') }}"
+                                style="color: {{ ow_icon_color($weather->weather_icon ?? '') }};"></i>
                         </div>
-                        <div class="detail-item">
-                            <i class="fas fa-wind"></i>
-                            <div class="detail-value">15 km/h</div>
-                            <div class="detail-label">Vento</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Rio de Janeiro -->
-            <div class="col-md-6 col-lg-4">
-                <div class="weather-card">
-                    <div class="city-name">Rio de Janeiro</div>
-                    <div class="country">Brasil</div>
-                    <div class="weather-icon">
-                        <i class="fas fa-sun" style="color: #fbbf24;"></i>
-                    </div>
-                    <div class="temperature">28°C</div>
-                    <div class="weather-description">Ensolarado</div>
-                    <div class="feels-like">Sensação térmica: 30°C</div>
-                    <div class="weather-details">
-                        <div class="detail-item">
-                            <i class="fas fa-tint"></i>
-                            <div class="detail-value">70%</div>
-                            <div class="detail-label">Umidade</div>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-wind"></i>
-                            <div class="detail-value">12 km/h</div>
-                            <div class="detail-label">Vento</div>
+                        <div class="temperature">{{ round($weather->temperature ?? 0) }}°C</div>
+                        <div class="weather-description">{{ $weather->weather_description ?? 'N/A' }}</div>
+                        <div class="feels-like">Feels like: {{ round($weather->feels_like ?? 0) }}°C</div>
+                        <div class="weather-details">
+                            <div class="detail-item">
+                                <i class="fas fa-tint"></i>
+                                <div class="detail-value">{{ $weather->humidity ?? 0 }}%</div>
+                                <div class="detail-label">Humidity</div>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-wind"></i>
+                                <div class="detail-value">{{ round(($weather->wind_speed ?? 0) * 3.6) }} km/h</div>
+                                <div class="detail-label">Wind</div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Londres -->
-            <div class="col-md-6 col-lg-4">
-                <div class="weather-card">
-                    <div class="city-name">Londres</div>
-                    <div class="country">Reino Unido</div>
-                    <div class="weather-icon">
-                        <i class="fas fa-cloud-rain" style="color: #3b82f6;"></i>
-                    </div>
-                    <div class="temperature">12°C</div>
-                    <div class="weather-description">Chuva Leve</div>
-                    <div class="feels-like">Sensação térmica: 10°C</div>
-                    <div class="weather-details">
-                        <div class="detail-item">
-                            <i class="fas fa-tint"></i>
-                            <div class="detail-value">85%</div>
-                            <div class="detail-label">Umidade</div>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-wind"></i>
-                            <div class="detail-value">20 km/h</div>
-                            <div class="detail-label">Vento</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Nova York -->
-            <div class="col-md-6 col-lg-4">
-                <div class="weather-card">
-                    <div class="city-name">Nova York</div>
-                    <div class="country">EUA</div>
-                    <div class="weather-icon">
-                        <i class="fas fa-cloud" style="color: #94a3b8;"></i>
-                    </div>
-                    <div class="temperature">18°C</div>
-                    <div class="weather-description">Nublado</div>
-                    <div class="feels-like">Sensação térmica: 16°C</div>
-                    <div class="weather-details">
-                        <div class="detail-item">
-                            <i class="fas fa-tint"></i>
-                            <div class="detail-value">60%</div>
-                            <div class="detail-label">Umidade</div>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-wind"></i>
-                            <div class="detail-value">18 km/h</div>
-                            <div class="detail-label">Vento</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tóquio -->
-            <div class="col-md-6 col-lg-4">
-                <div class="weather-card">
-                    <div class="city-name">Tóquio</div>
-                    <div class="country">Japão</div>
-                    <div class="weather-icon">
-                        <i class="fas fa-sun" style="color: #fbbf24;"></i>
-                    </div>
-                    <div class="temperature">22°C</div>
-                    <div class="weather-description">Céu Limpo</div>
-                    <div class="feels-like">Sensação térmica: 23°C</div>
-                    <div class="weather-details">
-                        <div class="detail-item">
-                            <i class="fas fa-tint"></i>
-                            <div class="detail-value">55%</div>
-                            <div class="detail-label">Umidade</div>
-                        </div>
-                        <div class="detail-item">
-                            <i class="fas fa-wind"></i>
-                            <div class="detail-value">10 km/h</div>
-                            <div class="detail-label">Vento</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            @endforeach
         </div>
     </div>
 

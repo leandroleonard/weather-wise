@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\City;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        return view('app');
+        $featuredCities = City::where('is_featured', 1)
+            ->with(['weather'])
+            ->get();
+
+        return view('app', compact('featuredCities'));
     }
 }
