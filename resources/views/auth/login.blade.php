@@ -54,12 +54,6 @@
                                 @enderror
                             </div>
 
-                            <div class="mb-3 form-check">
-                                <input id="remember" name="remember" type="checkbox" class="form-check-input" value="1"
-                                    {{ old('remember') ? 'checked' : '' }}>
-                                <label class="form-check-label" for="remember">Lembrar-me</label>
-                            </div>
-
                             <button type="submit" class="btn btn-primary">
                                 <span id="btnSpinner" class="spinner-border spinner-border-sm me-2" role="status"
                                     aria-hidden="true" style="display:none;"></span>

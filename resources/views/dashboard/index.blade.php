@@ -45,7 +45,7 @@
     <div class="container pb-5">
         @if($city != null)
             <h1 class="city-title">
-                Climate in {{ $city->name }}
+                Weather in {{ $city->name }}
             </h1>
 
             @if(isset($alerts) && $alerts->count() > 0)
