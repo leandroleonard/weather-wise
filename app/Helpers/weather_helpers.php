@@ -54,3 +54,20 @@ if (!function_exists('ow_icon_color')) {
         return $colors[$icon] ?? '#9CA3AF';
     }
 }
+
+function timezoneFromOffset(int $offsetSeconds): string
+{
+    $sign = ($offsetSeconds < 0) ? '-' : '+';
+    $offsetSeconds = abs($offsetSeconds);
+    $hours = floor($offsetSeconds / 3600);
+    $minutes = floor(($offsetSeconds % 3600) / 60);
+    return sprintf('%s%02d:%02d', $sign, $hours, $minutes); 
+}
+
+function parseWithOffset($dateString, $offsetSeconds)
+{
+    if (!$dateString)
+        return null;
+    $tz = timezoneFromOffset($offsetSeconds);
+    return \Carbon\Carbon::parse($dateString)->setTimezone($tz);
+}

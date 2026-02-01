@@ -38,6 +38,76 @@
                 Climate in {{ $city->name }}
             </h1>
 
+            @if(isset($alerts) && $alerts->count() > 0)
+                <div class="alerts-section mt-4 mb-5">
+                    <h2 class="forecast-title">Weather Alerts</h2>
+
+                    <div class="alerts-list d-flex flex-column gap-3 mt-2">
+                        @foreach($alerts as $alert)
+                            @php
+                                $iconClass = 'fas fa-exclamation-triangle';
+                                $bgClass = 'alert-warning';
+                                $sender = $alert->sender_name ?? 'Official';
+                                $start = parseWithOffset($alert->start_time, $offset);
+                                $end = parseWithOffset($alert->end_time, $offset);
+
+                                $tags = json_decode($alert->tags ?? '[]', true) ?: [];
+                            @endphp
+
+                            <div class="alert-card p-3 border rounded shadow-sm" data-alert-id="{{ $alert->id }}">
+                                <div class="d-flex align-items-start justify-content-between">
+                                    <div class="d-flex align-items-center gap-3">
+                                        <div class="alert-icon">
+                                            <i class="{{ $iconClass }} fa-2x text-danger"></i>
+                                        </div>
+                                        <div>
+                                            <div class="alert-title fw-bold text-white" style="font-size:1.05rem;">
+                                                {{ $alert->event ?? 'Weather Alert' }}
+                                            </div>
+                                            <div class="alert-meta text-white" style="font-size:0.9rem;">
+                                                {{ $sender }}
+                                                @if($start)
+                                                    · {{ $start->locale('en')->isoFormat('D [de] MMM [às] HH:mm') }}
+                                                @endif
+                                                @if($end)
+                                                    — {{ $end->locale('en')->isoFormat('D [de] MMM [às] HH:mm') }}
+                                                @endif
+                                                ·
+                                                <small>{{ parseWithOffset($alert->cached_at ?? now(), $offset)?->diffForHumans() }}</small>
+                                            </div>
+
+                                            @if(!empty($tags))
+                                                <div class="mt-2">
+                                                    @foreach($tags as $t)
+                                                        <span class="badge bg-secondary me-1">{{ $t }}</span>
+                                                    @endforeach
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex align-items-center gap-2">
+                                        <button class="btn btn-sm btn-outline-primary btn-toggle-desc"
+                                            data-target="#alert-desc-{{ $alert->id }}">
+                                            Details
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-secondary btn-dismiss-alert">
+                                            Dismiss
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="alert-description mt-3 collapse" id="alert-desc-{{ $alert->id }}">
+                                    <div class="small text-muted" style="white-space:pre-wrap;">
+                                        {!! nl2br(e($alert->description ?? 'No description provided.')) !!}
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
             <div class="current-weather">
                 <div class="row align-items-center">
                     <div class="col-md-6">
@@ -85,25 +155,25 @@
                     </div>
                     <div class="info-card">
                         <i class="fas fa-sunrise"></i>
-                        <div class="value">{{ \Carbon\Carbon::parse($current->sunrise)->format('H:i') }}</div>
+                        <div class="value">{{ parseWithOffset($current->sunrise, $offset)?->format('H:i') }}</div>
                         <div class="label">Sunrise</div>
                     </div>
                     <div class="info-card">
                         <i class="fas fa-sunset"></i>
-                        <div class="value">{{ \Carbon\Carbon::parse($current->sunset)->format('H:i') }}</div>
+                        <div class="value">{{ parseWithOffset($current->sunset, $offset)?->format('H:i') }}</div>
                         <div class="label">Sunset</div>
                     </div>
                 </div>
             </div>
 
-              <div class="hourly-forecast-section mt-4">
+            <div class="hourly-forecast-section mt-4">
                 <h2 class="forecast-title">Today's Time Forecast</h2>
                 <div class="hourly-forecast-cards d-flex overflow-auto gap-3 pb-2">
                     @foreach($hourly as $hour)
                         <div class="hourly-forecast-card text-center p-3 border rounded"
                             style="min-width: 100px; background: #f8fafc;">
                             <div class="hourly-time fw-bold">
-                                {{ \Carbon\Carbon::parse($hour->dt)->format('H:i') }}
+                                {{ parseWithOffset($hour->dt, $offset)?->format('H:i') }}
                             </div>
                             <div class="hourly-icon my-2">
                                 <i class="{{ ow_icon_to_fa($hour->weather_icon) }} fa-2x"
@@ -123,15 +193,18 @@
                 </div>
             </div>
 
+
             <div class="forecast-section">
                 <h2 class="forecast-title">Forecast for the Next 5 Days</h2>
                 <div class="forecast-cards">
                     @foreach($daily as $day)
                         <div class="forecast-card">
                             <div class="forecast-day">
-                                {{ \Carbon\Carbon::parse($day->forecast_date)->locale('en')->isoFormat('ddd') }}
+                                {{ parseWithOffset($day->forecast_date, $offset)?->locale('en')->isoFormat('ddd') }}
                             </div>
-                            <div class="forecast-date">{{ \Carbon\Carbon::parse($day->forecast_date)->format('d/m') }}</div>
+                            <div class="forecast-date">
+                                {{ parseWithOffset($day->forecast_date, $offset)?->format('d/m') }}
+                            </div>
                             <div class="forecast-icon">
                                 <i class="{{ ow_icon_to_fa($day->weather_icon) }}"
                                     style="font-size: 3rem;color: {{ ow_icon_color($day->weather_icon) }};"></i>
@@ -271,6 +344,18 @@
 
             const chart = new ApexCharts(document.querySelector("#hourlyChart"), options);
             chart.render();
+        });
+
+        $(function () {
+            $('.btn-toggle-desc').on('click', function () {
+                const target = $(this).data('target');
+                $(target).collapse('toggle');
+            });
+
+            $('.btn-dismiss-alert').on('click', function () {
+                const $card = $(this).closest('.alert-card');
+                $card.fadeOut(250, function () { $(this).remove(); });
+            });
         });
     </script>
 </body>

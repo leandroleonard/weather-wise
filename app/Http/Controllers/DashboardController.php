@@ -16,22 +16,6 @@ class DashboardController extends Controller
         $this->cityService = new CityService();
     }
 
-    // public function index(Request $request)
-    // {
-    //     $user = auth()->user();
-
-    //     $city = null;
-
-    //     if ($user->city_id)
-    //         $city = $this->cityService->getCityById($user->city_id);
-
-    //     // echo "<pre>";
-    //     // exit(var_dump($city));
-
-
-    //     return view('dashboard.index', ['city' => $city]);
-    // }
-
     public function index()
     {
         $user = auth()->user();
@@ -61,7 +45,17 @@ class DashboardController extends Controller
             ->orderBy('dt')
             ->get();
 
-        return view('dashboard.index', compact('city', 'current', 'daily', 'hourly'));
+        $alerts = DB::table('weather_alerts')
+            ->where('city_id', $city->id)
+            ->where(function ($q) {
+                $q->whereNull('end_time')->orWhere('end_time', '>=', \Carbon\Carbon::now());
+            })
+            ->orderBy('start_time', 'asc')
+            ->get();
+
+        $offset = $city->timezone_offset ?? 0;
+
+        return view('dashboard.index', compact('city', 'current', 'daily', 'hourly', 'alerts', 'offset'));
     }
 
     public function setup(Request $request)
