@@ -17,6 +17,9 @@ class CityService
     {
         $city = City::whereId($id)->first();
 
+        if (!$city)
+            return null;
+
         if (!$city->weather || $city->weather->expires_at < Carbon::now()) {
             $this->popupateWeather($id);
         }

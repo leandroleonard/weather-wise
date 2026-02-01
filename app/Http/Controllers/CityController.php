@@ -36,6 +36,8 @@ class CityController extends Controller
 
         $data = $this->cityService->getCity($cityId);
 
+        if(!$data) return redirect()->to('404');
+
         return view('dashboard.index', $data);
     }
 }

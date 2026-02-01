@@ -13,14 +13,16 @@
 <body>
     <nav class="navbar">
         <div class="container">
-            <a class="navbar-brand" href="#" onclick="showPage('homePage')">
+            <a class="navbar-brand" @if(auth()->check()) href="{{ route('dashboard') }}" @endif>
                 <i class="fas fa-cloud-sun"></i>
                 WeatherApp
             </a>
-            <div>
-                <a href="{{ route('login') }}" class="btn btn-outline-light me-2">Login</a>
-                <a href="{{ route('register') }}" class="btn btn-light">Register</a>
-            </div>
+            @if(!auth()->check())
+                <div>
+                    <a href="{{ route('login') }}" class="btn btn-outline-light me-2">Login</a>
+                    <a href="{{ route('register') }}" class="btn btn-light">Register</a>
+                </div>
+            @endif
         </div>
     </nav>
 
@@ -37,7 +39,8 @@
                 @php
                     $weather = $city->weather;
                 @endphp
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4" @if(auth()->check()) style="cursor:pointer"
+                onclick="window.location.href = `/dashboard/city/{{ $city->id }}/weather`" @endif>
                     <div class="weather-card">
                         <div class="city-name">{{ $city->name }}</div>
                         <div class="country">{{ $city->country ?? 'N/A' }}</div>
