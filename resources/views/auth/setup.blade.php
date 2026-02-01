@@ -45,10 +45,20 @@
             <form action="{{ route('setup_submit') }}" method="POST" novalidate>
                 @csrf
 
-                <div class="mb-4">
-                    <label for="city" class="form-label fw-bold"><i class="fas fa-map-marker-alt me-2"></i>Your city</label>
-                    <input type="text" id="city" name="city" class="form-control @error('city') is-invalid @enderror"
-                        placeholder="Ex: São Paulo, BR" value="{{ old('city') }}" required>
+                <div class="mb-4 position-relative">
+                    <label for="city_display" class="form-label fw-bold">
+                        <i class="fas fa-map-marker-alt me-2"></i>Your city
+                    </label>
+
+                    <input type="text" id="city_display" class="form-control @error('city') is-invalid @enderror"
+                        placeholder="Search for a city..." value="{{ old('city_name') }}" autocomplete="off" required>
+
+                    <input type="hidden" id="city_id" name="city" value="{{ old('city') }}">
+
+                    <ul id="city-suggestions" class="list-group position-absolute w-100"
+                        style="z-index: 1000; max-height: 200px; overflow-y: auto; display:none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    </ul>
+
                     @error('city')
                         <span class="text-error">{{ $message }}</span>
                     @enderror
@@ -101,5 +111,72 @@
             </form>
         </div>
     </div>
+
+   <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const displayInput = document.getElementById('city_display');
+            const idInput = document.getElementById('city_id');
+            const suggestionsList = document.getElementById('city-suggestions');
+
+            let debounceTimer;
+
+            displayInput.addEventListener('input', function () {
+                const query = this.value.trim();
+
+                if (query.length === 0) {
+                    idInput.value = '';
+                }
+
+                if (query.length < 2) {
+                    suggestionsList.style.display = 'none';
+                    return;
+                }
+
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    fetch(`/api/cities?q=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            suggestionsList.innerHTML = '';
+
+                            if (data.length === 0) {
+                                suggestionsList.style.display = 'none';
+                                return;
+                            }
+
+                            data.forEach(city => {
+                                const li = document.createElement('li');
+                                li.classList.add('list-group-item', 'list-group-item-action');
+
+                                const displayText = `${city.name}, ${city.state ? city.state + ', ' : ''}${city.country}`;
+                                li.textContent = displayText;
+                                li.style.cursor = 'pointer';
+
+                                li.addEventListener('mousedown', function (e) {
+                                    e.preventDefault();
+
+                                    displayInput.value = displayText;
+
+                                    idInput.value = city.id;
+
+                                    suggestionsList.style.display = 'none';
+                                });
+
+                                suggestionsList.appendChild(li);
+                            });
+
+                            suggestionsList.style.display = 'block';
+                        })
+                        .catch(error => console.error('Error fetching cities:', error));
+                }, 300);
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!displayInput.contains(e.target) && !suggestionsList.contains(e.target)) {
+                    suggestionsList.style.display = 'none';
+                }
+            });
+        });
+        </script>
 </body>
 </html>

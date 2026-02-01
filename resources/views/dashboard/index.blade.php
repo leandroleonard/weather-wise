@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>WeatherApp - Real-Time Weather</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+</head>
+
+<body>
+    <div class="dashboard-header">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <a class="navbar-brand" href="#">
+                        <i class="fas fa-cloud-sun"></i>
+                        WeatherApp
+                    </a>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span class="user-greeting">Hi, {{ auth()->user()->name }}</span>
+                    <button class="btn btn-logout" id="btn-logout">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container pb-5">
+        @if($city != null)
+            <h1 class="city-title">
+                Climate in {{ $city->name }}
+            </h1>
+
+            <div class="current-weather">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <h2 style="color: #1e293b; font-weight: 700; margin-bottom: 0.5rem;">Now</h2>
+                        <div class="current-condition">{{ $current->weather_description ?? 'N/A' }}</div>
+                        <div class="current-temp">{{ round($current->temperature) }}°C</div>
+                        <div class="feels-like" style="font-size: 1rem;">Sensação: {{ round($current->feels_like) }}°C</div>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <i class="{{ ow_icon_to_fa($current->weather_icon) }}"
+                            style="font-size: 6rem;color: {{ ow_icon_color($current->weather_icon) }};"></i>
+                    </div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-card">
+                        <i class="fas fa-thermometer-half"></i>
+                        <div class="value">{{ round($current->temperature) }}°C</div>
+                        <div class="label">Temperature</div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-tint"></i>
+                        <div class="value">{{ $current->humidity }}%</div>
+                        <div class="label">Humidity</div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-wind"></i>
+                        <div class="value">{{ round($current->wind_speed * 3.6) }} km/h</div>
+                        <div class="label">Wind</div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-cloud-rain"></i>
+                        <div class="value">{{ round(($current->pop ?? 0) * 100) }}%</div>
+                        <div class="label">Precipitation</div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-eye"></i>
+                        <div class="value">{{ round($current->visibility / 1000) }} km</div>
+                        <div class="label">Visibility</div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-compress-arrows-alt"></i>
+                        <div class="value">{{ $current->pressure }} hPa</div>
+                        <div class="label">Pressure</div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-sunrise"></i>
+                        <div class="value">{{ \Carbon\Carbon::parse($current->sunrise)->format('H:i') }}</div>
+                        <div class="label">Sunrise</div>
+                    </div>
+                    <div class="info-card">
+                        <i class="fas fa-sunset"></i>
+                        <div class="value">{{ \Carbon\Carbon::parse($current->sunset)->format('H:i') }}</div>
+                        <div class="label">Sunset</div>
+                    </div>
+                </div>
+            </div>
+
+              <div class="hourly-forecast-section mt-4">
+                <h2 class="forecast-title">Today's Time Forecast</h2>
+                <div class="hourly-forecast-cards d-flex overflow-auto gap-3 pb-2">
+                    @foreach($hourly as $hour)
+                        <div class="hourly-forecast-card text-center p-3 border rounded"
+                            style="min-width: 100px; background: #f8fafc;">
+                            <div class="hourly-time fw-bold">
+                                {{ \Carbon\Carbon::parse($hour->dt)->format('H:i') }}
+                            </div>
+                            <div class="hourly-icon my-2">
+                                <i class="{{ ow_icon_to_fa($hour->weather_icon) }} fa-2x"
+                                    style="color: {{ ow_icon_color($hour->weather_icon) }}"></i>
+                            </div>
+                            <div class="hourly-temp fw-semibold">
+                                {{ round($hour->temperature) }}°
+                            </div>
+                            <div class="hourly-feels-like text-muted" style="font-size: 0.85rem;">
+                                Feels like: {{ round($hour->feels_like) }}°
+                            </div>
+                            <div class="hourly-pop mt-1" style="font-size: 0.8rem; color: #3b82f6;">
+                                {{ round(($hour->pop ?? 0) * 100) }}% Rain
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+            <div class="forecast-section">
+                <h2 class="forecast-title">Forecast for the Next 5 Days</h2>
+                <div class="forecast-cards">
+                    @foreach($daily as $day)
+                        <div class="forecast-card">
+                            <div class="forecast-day">
+                                {{ \Carbon\Carbon::parse($day->forecast_date)->locale('en')->isoFormat('ddd') }}
+                            </div>
+                            <div class="forecast-date">{{ \Carbon\Carbon::parse($day->forecast_date)->format('d/m') }}</div>
+                            <div class="forecast-icon">
+                                <i class="{{ ow_icon_to_fa($day->weather_icon) }}"
+                                    style="font-size: 3rem;color: {{ ow_icon_color($day->weather_icon) }};"></i>
+                            </div>
+                            <div class="forecast-temp">{{ round($day->temp_day) }}°</div>
+                            <div class="forecast-temp-range">{{ round($day->temp_min) }}°</div>
+                            <div class="forecast-rain">{{ round(($day->pop ?? 0) * 100) }}% Rain</div>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
+        @else
+
+        @endif
+
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            $('#btn-logout').on('click', function (e) {
+                e.preventDefault();
+                if (confirm("Are you sure you want to leave?")) {
+                    $.post('{{ route("logout") }}', function (data) {
+                        window.location.href = '{{ route("home") }}';
+                    }).fail(function () {
+                        alert("Error logging out.");
+                    });
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const options = {
+                chart: {
+                    type: 'area',
+                    height: 350,
+                    zoom: {
+                        enabled: true,
+                        type: 'x',
+                        autoScaleYaxis: true
+                    },
+                    toolbar: {
+                        show: true,
+                        tools: {
+                            zoom: true,
+                            zoomin: true,
+                            zoomout: true,
+                            pan: true,
+                            reset: true
+                        }
+                    }
+                },
+                dataLabels: {
+                    enabled: false
+                },
+                stroke: {
+                    curve: 'smooth',
+                    width: 3
+                },
+                series: [
+                    {
+                        name: 'Temperature (°C)',
+                        data: [
+                            @foreach($hourly as $h)
+                                {{ round($h->temperature) }},
+                            @endforeach
+                    ]
+                    },
+                    {
+                        name: 'Feels Like (°C)',
+                        data: [
+                            @foreach($hourly as $h)
+                                {{ round($h->feels_like) }},
+                            @endforeach
+                    ]
+                    }
+                ],
+                xaxis: {
+                    categories: [
+                        @foreach($hourly as $h)
+                            '{{ \Carbon\Carbon::parse($h->dt)->format('H:i') }}',
+                        @endforeach
+                ],
+                    title: {
+                        text: 'Hour'
+                    },
+                    labels: {
+                        rotate: -45,
+                        style: {
+                            fontSize: '12px'
+                        }
+                    }
+                },
+                yaxis: {
+                    title: {
+                        text: 'Temperature (°C)'
+                    },
+                    min: Math.min(
+                        @foreach($hourly as $h)
+                            {{ round($h->temperature) }},
+                        @endforeach
+                ) - 5,
+                    max: Math.max(
+                        @foreach($hourly as $h)
+                            {{ round($h->temperature) }},
+                        @endforeach
+                ) + 5,
+                },
+                tooltip: {
+                    shared: true,
+                    intersect: false,
+                    y: {
+                        formatter: function (val) {
+                            return val + "°C";
+                        }
+                    }
+                },
+                legend: {
+                    position: 'top',
+                    horizontalAlign: 'right'
+                },
+                colors: ['#1E90FF', '#FF6347']
+            };
+
+            const chart = new ApexCharts(document.querySelector("#hourlyChart"), options);
+            chart.render();
+        });
+    </script>
+</body>
+
+</html>

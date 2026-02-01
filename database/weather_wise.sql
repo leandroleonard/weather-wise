@@ -60,7 +60,7 @@ create table
     cities (
         id int primary key auto_increment,
         name varchar(100) not null,
-        slug varchar(100) not null unique,
+        slug varchar(100) not null,
         code varchar(20) null,
         country varchar(2) not null,
         state varchar(100) null,

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WeatherApp - Clima em Tempo Real</title>
+    <title>WeatherApp - Real-Time Weather</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
@@ -26,7 +26,7 @@
 
     <div class="hero-section">
         <div class="container">
-            <h1>Clima em Tempo Real</h1>
+            <h1>Real-Time Weather</h1>
             <p>Acompanhe as condições climáticas das principais cidades do mundo</p>
         </div>
     </div>

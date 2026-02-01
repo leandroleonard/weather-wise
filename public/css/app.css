@@ -456,3 +456,23 @@ body {
     height: 1rem;
     border-width: .12em;
 }
+
+.hourly-forecast-cards {
+    scrollbar-width: thin;
+    scrollbar-color: #94a3b8 transparent;
+}
+
+.hourly-forecast-cards::-webkit-scrollbar {
+    height: 6px;
+}
+
+.hourly-forecast-cards::-webkit-scrollbar-thumb {
+    background-color: #94a3b8;
+    border-radius: 3px;
+}
+
+.hourly-forecast-card {
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.1);
+    background-color: white;
+}

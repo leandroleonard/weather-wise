@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class WeatherHourly extends Model
 {
-    protected $table = 'weather_hourley';
+    protected $table = 'weather_hourly';
     protected $guarded = [''];
 }

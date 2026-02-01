@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\SetupController;
+use App\Http\Controllers\CityController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
@@ -22,8 +23,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('dashboard/setup', [SetupController::class, 'index'])->name('setup');
     Route::post('dashboard/setup', [SetupController::class, 'store'])->name('setup_submit');
 
+    Route::get('api/cities', [CityController::class, 'get'])->name('api.cities');
+
     Route::middleware(['auth.basic'])->prefix('dashboard')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('city', [CityController::class, 'index'])->name('city');
     });
 
 });
