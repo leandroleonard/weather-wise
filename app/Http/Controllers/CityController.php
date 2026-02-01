@@ -15,12 +15,6 @@ class CityController extends Controller
     {
         $this->cityService = new CityService();
     }
-    public function index()
-    {
-        echo "<pre>";
-        var_dump($this->cityService->getCity("Luanda"));
-
-    }
 
     public function get(Request $request)
     {
@@ -35,5 +29,13 @@ class CityController extends Controller
             ->get(['id', 'name', 'state', 'country']);
 
         return response()->json($cities);
+    }
+
+    public function showCityWeather($cityId)
+    {
+
+        $data = $this->cityService->getCity($cityId);
+
+        return view('dashboard.index', $data);
     }
 }

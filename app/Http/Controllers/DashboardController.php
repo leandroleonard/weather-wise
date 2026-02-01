@@ -25,37 +25,9 @@ class DashboardController extends Controller
             return view('dashboard.index')->with('city', null);
         }
 
-        $current = DB::table('weather')
-            ->where('city_id', $city->id)
-            ->orderByDesc('dt')
-            ->first();
+        $data = $this->cityService->getCity($city->id);
 
-        $daily = DB::table('weather_daily')
-            ->where('city_id', $city->id)
-            ->orderBy('forecast_date')
-            ->limit(5)
-            ->get();
-
-        $today = Carbon::today();
-        $tomorrow = $today->copy()->addDay();
-
-        $hourly = DB::table('weather_hourly')
-            ->where('city_id', $city->id)
-            ->whereBetween('dt', [$today, $tomorrow])
-            ->orderBy('dt')
-            ->get();
-
-        $alerts = DB::table('weather_alerts')
-            ->where('city_id', $city->id)
-            ->where(function ($q) {
-                $q->whereNull('end_time')->orWhere('end_time', '>=', \Carbon\Carbon::now());
-            })
-            ->orderBy('start_time', 'asc')
-            ->get();
-
-        $offset = $city->timezone_offset ?? 0;
-
-        return view('dashboard.index', compact('city', 'current', 'daily', 'hourly', 'alerts', 'offset'));
+        return view('dashboard.index', $data);
     }
 
     public function setup(Request $request)

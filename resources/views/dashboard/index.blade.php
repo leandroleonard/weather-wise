@@ -17,11 +17,21 @@
         <div class="container">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <a class="navbar-brand" href="#">
+                    <a class="navbar-brand" href="{{ route('dashboard') }}">
                         <i class="fas fa-cloud-sun"></i>
                         WeatherApp
                     </a>
                 </div>
+
+                <div class="position-relative me-3" style="min-width: 300px;">
+                    <input type="text" id="city_search_display" class="form-control" placeholder="Search for a city..."
+                        autocomplete="off" />
+                    <input type="hidden" id="city_search_id" name="city_search_id" />
+                    <ul id="city_search_suggestions" class="list-group position-absolute w-100"
+                        style="z-index: 1000; max-height: 200px; overflow-y: auto; display:none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                    </ul>
+                </div>
+
                 <div class="d-flex align-items-center gap-3">
                     <span class="user-greeting">Hi, {{ auth()->user()->name }}</span>
                     <button class="btn btn-logout" id="btn-logout">
@@ -170,6 +180,7 @@
                 <h2 class="forecast-title">Today's Time Forecast</h2>
                 <div class="hourly-forecast-cards d-flex overflow-auto gap-3 pb-2">
                     @foreach($hourly as $hour)
+                        @php if($hour->dt < \Carbon\Carbon::now()->subHour()) continue; @endphp
                         <div class="hourly-forecast-card text-center p-3 border rounded"
                             style="min-width: 100px; background: #f8fafc;">
                             <div class="hourly-time fw-bold">
@@ -358,6 +369,76 @@
             });
         });
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const displayInput = document.getElementById('city_search_display');
+            const idInput = document.getElementById('city_search_id');
+            const suggestionsList = document.getElementById('city_search_suggestions');
+
+            let debounceTimer;
+
+            displayInput.addEventListener('input', function () {
+                const query = this.value.trim();
+
+                if (query.length === 0) {
+                    idInput.value = '';
+                    suggestionsList.style.display = 'none';
+                    return;
+                }
+
+                if (query.length < 2) {
+                    suggestionsList.style.display = 'none';
+                    return;
+                }
+
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => {
+                    fetch(`/api/cities?q=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            suggestionsList.innerHTML = '';
+
+                            if (data.length === 0) {
+                                suggestionsList.style.display = 'none';
+                                return;
+                            }
+
+                            data.forEach(city => {
+                                const li = document.createElement('li');
+                                li.classList.add('list-group-item', 'list-group-item-action');
+
+                                const displayText = `${city.name}, ${city.state ? city.state + ', ' : ''}${city.country}`;
+                                li.textContent = displayText;
+                                li.style.cursor = 'pointer';
+
+                                li.addEventListener('mousedown', function (e) {
+                                    e.preventDefault();
+
+                                    displayInput.value = displayText;
+                                    idInput.value = city.id;
+                                    suggestionsList.style.display = 'none';
+
+                                    window.location.href = `/dashboard/city/${city.id}/weather`;
+                                });
+
+                                suggestionsList.appendChild(li);
+                            });
+
+                            suggestionsList.style.display = 'block';
+                        })
+                        .catch(error => console.error('Error fetching cities:', error));
+                }, 300);
+            });
+
+            document.addEventListener('click', function (e) {
+                if (!displayInput.contains(e.target) && !suggestionsList.contains(e.target)) {
+                    suggestionsList.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
 </body>
 
 </html>

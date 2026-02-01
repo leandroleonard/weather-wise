@@ -13,17 +13,47 @@ class CityService
 
     }
 
-    public function getCity($city)
+    public function getCity($id)
     {
-        if (!($coord = $this->getCityApi()->getGeo($city))) {
-            return 'This city can not be found';
+        $city = City::whereId($id)->first();
+
+        if (!$city->weather || $city->weather->expires_at < Carbon::now()) {
+            $this->popupateWeather($id);
         }
 
-        Log::debug("Coord response", $coord);
 
-        $details = $this->getCityApi()->getCityWeather($coord['lat'], $coord['lon']);
+        $current = DB::table('weather')
+            ->where('city_id', $city->id)
+            ->orderByDesc('dt')
+            ->first();
 
-        return $details;
+        $daily = DB::table('weather_daily')
+            ->where('city_id', $city->id)
+            ->orderBy('forecast_date')
+            ->limit(5)
+            ->get();
+
+        $today = Carbon::today();
+        $tomorrow = $today->copy()->addDay();
+
+        $hourly = DB::table('weather_hourly')
+            ->where('city_id', $city->id)
+            ->whereBetween('dt', [$today, $tomorrow])
+            ->orderBy('dt')
+            ->get();
+
+        $alerts = DB::table('weather_alerts')
+            ->where('city_id', $city->id)
+            ->where(function ($q) {
+                $q->whereNull('end_time')->orWhere('end_time', '>=', Carbon::now());
+            })
+            ->orderBy('start_time', 'asc')
+            ->get();
+
+
+        $offset = $city->timezone_offset ?? 0;
+
+        return ['city' => $city, 'current' => $current, 'daily' => $daily, 'hourly' => $hourly, 'alerts' => $alerts, 'offset' => $offset];
     }
 
     public function popupateWeather($cityId, $force = false)
@@ -34,15 +64,15 @@ class CityService
 
         $now = Carbon::now();
 
-        if (($city->weather && $city->weather->expires_at < $now) && !$force)
+        if (($city->weather && $city->weather->expires_at > $now) && !$force)
             return true;
 
         $data = $this->getCityApi()->oneCall($city['lat'], $city['lon']);
 
-        if(!$city->timezone && isset($data['timezone']))
+        if (!$city->timezone && isset($data['timezone']))
             $city->timezone = $data['timezone'];
 
-        if(!$city->timezone_offset && isset($data['timezone_offeset']))
+        if (!$city->timezone_offset && isset($data['timezone_offeset']))
             $city->timezone_offset = $data['timezone_offset'];
 
         $city->save();

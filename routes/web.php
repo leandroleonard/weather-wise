@@ -28,6 +28,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware(['auth.basic'])->prefix('dashboard')->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
         Route::get('city', [CityController::class, 'index'])->name('city');
+        Route::get('city/{city}/weather', [CityController::class, 'showCityWeather'])->name('weather_city');
     });
 
 });
