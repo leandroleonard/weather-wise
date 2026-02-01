@@ -26,7 +26,7 @@ class CityService
         return $details;
     }
 
-    public function popupateWeather($cityId)
+    public function popupateWeather($cityId, $force = false)
     {
         $city = City::with(['daily', 'hourly', 'weather'])->whereId($cityId)->first();
         if (!$city)
@@ -34,7 +34,7 @@ class CityService
 
         $now = Carbon::now();
 
-        if ($city->weather && $city->weather->expires_at < $now)
+        if (($city->weather && $city->weather->expires_at < $now) && !$force)
             return true;
 
         $data = $this->getCityApi()->oneCall($city['lat'], $city['lon']);
@@ -184,7 +184,7 @@ class CityService
                 );
             }
         }
-        
+
         return true;
     }
 
